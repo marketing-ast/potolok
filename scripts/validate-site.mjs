@@ -47,7 +47,7 @@ const requiredFragments = [
   "отказ",
   "заявк",
   "натяжн",
-  "казахстан"
+  "доступно"
 ];
 
 for (const fragment of requiredFragments) {
@@ -56,7 +56,28 @@ for (const fragment of requiredFragments) {
   }
 }
 
-const reviewMarkers = [
+const mustInclude = [
+  "Потолок<br>за 1 день",
+  "Быстро. Ровно.<br>Доступно",
+  "Отзывы",
+  "Называем цену и сроки сразу",
+  "Оставьте номер, свяжемся в ближайшее рабочее время. Если не свяжемся быстро, с нас скидка.",
+  "reviews-carousel",
+  "review-track",
+  "review-button"
+];
+
+for (const marker of mustInclude) {
+  if (!pages.index.includes(marker)) {
+    fail(`Missing updated landing content: ${marker}`);
+  }
+}
+
+const mustNotInclude = [
+  "КАЗАХСТАН",
+  "Говорят просто",
+  "Посчитаем ваш потолок",
+  "Пока форма работает как заглушка",
   "Жанна",
   "Олег",
   "Айгуль",
@@ -67,9 +88,9 @@ const reviewMarkers = [
   "Ермек"
 ];
 
-for (const marker of reviewMarkers) {
-  if (!pages.index.includes(marker)) {
-    fail(`Missing review marker: ${marker}`);
+for (const marker of mustNotInclude) {
+  if (pages.index.includes(marker)) {
+    fail(`Outdated content still present: ${marker}`);
   }
 }
 
