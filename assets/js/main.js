@@ -23,64 +23,55 @@ if (form && note) {
 const carousel = document.querySelector(".reviews-carousel");
 
 if (carousel) {
-  const track = carousel.querySelector(".review-track");
+  const viewport = carousel.querySelector(".review-viewport");
   const cards = Array.from(carousel.querySelectorAll(".review-card"));
   const previous = carousel.querySelector(".review-prev");
   const next = carousel.querySelector(".review-next");
-  let activeIndex = 1;
-  let autoplayId;
+  let activeIndex = cards.length > 1 ? 1 : 0;
+  let settleTimer;
 
-  const px = (value) => Number(String(value).replace("px", "")) || 0;
+  const getNearestIndex = () => {
+    if (!viewport || !cards.length) return 0;
 
-  const cardStep = () => {
-    const first = cards[0];
-    if (!first) return 0;
-    const gap = px(getComputedStyle(track).gap);
-    return first.getBoundingClientRect().width + gap;
+    const viewportRect = viewport.getBoundingClientRect();
+    const viewportCenter = viewportRect.left + viewportRect.width / 2;
+
+    return cards.reduce((nearest, card, index) => {
+      const rect = card.getBoundingClientRect();
+      const center = rect.left + rect.width / 2;
+      const distance = Math.abs(center - viewportCenter);
+      return distance < nearest.distance ? { index, distance } : nearest;
+    }, { index: 0, distance: Number.POSITIVE_INFINITY }).index;
   };
 
-  const centerOffset = () => {
-    const first = cards[0];
-    if (!first) return 0;
-    const gap = px(getComputedStyle(track).gap);
-    const cardWidth = first.getBoundingClientRect().width;
-    const pageWidth = document.documentElement.clientWidth;
-    const visibleCount = pageWidth <= 640 ? 1 : 2;
-    const viewport = carousel.querySelector(".review-viewport");
-    const targetLeft = (pageWidth - cardWidth * visibleCount - gap * (visibleCount - 1)) / 2;
-    return targetLeft - viewport.getBoundingClientRect().left;
-  };
+  const scrollToReview = (index, behavior = "smooth") => {
+    if (!viewport || !cards.length) return;
 
-  const render = () => {
-    track.style.transform = `translateX(${centerOffset() - activeIndex * cardStep()}px)`;
-  };
+    activeIndex = (index + cards.length) % cards.length;
+    const card = cards[activeIndex];
+    const viewportRect = viewport.getBoundingClientRect();
+    const cardRect = card.getBoundingClientRect();
+    const delta = cardRect.left + cardRect.width / 2 - (viewportRect.left + viewportRect.width / 2);
 
-  const go = (direction) => {
-    activeIndex += direction;
-    if (activeIndex >= cards.length - 1) activeIndex = 1;
-    if (activeIndex <= 0) activeIndex = cards.length - 2;
-    render();
-  };
-
-  const restartAutoplay = () => {
-    window.clearInterval(autoplayId);
-    autoplayId = window.setInterval(() => go(1), 5200);
+    viewport.scrollBy({ left: delta, behavior });
   };
 
   previous?.addEventListener("click", () => {
-    go(-1);
-    restartAutoplay();
+    scrollToReview(getNearestIndex() - 1);
   });
 
   next?.addEventListener("click", () => {
-    go(1);
-    restartAutoplay();
+    scrollToReview(getNearestIndex() + 1);
   });
 
-  window.addEventListener("resize", render);
-  window.addEventListener("load", render);
-  render();
-  window.setTimeout(render, 80);
-  window.setTimeout(render, 350);
-  restartAutoplay();
+  viewport?.addEventListener("scroll", () => {
+    window.clearTimeout(settleTimer);
+    settleTimer = window.setTimeout(() => {
+      activeIndex = getNearestIndex();
+    }, 90);
+  });
+
+  window.addEventListener("resize", () => scrollToReview(activeIndex, "auto"));
+  window.addEventListener("load", () => scrollToReview(activeIndex, "auto"));
+  window.setTimeout(() => scrollToReview(activeIndex, "auto"), 80);
 }

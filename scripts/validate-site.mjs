@@ -31,6 +31,8 @@ const pages = {
   privacy: read("privacy.html"),
   personalData: read("personal-data.html")
 };
+const css = read("assets/css/styles.css");
+const js = read("assets/js/main.js");
 
 const combined = Object.values(pages).join("\n").toLowerCase();
 
@@ -57,12 +59,14 @@ for (const fragment of requiredFragments) {
 }
 
 const mustInclude = [
-  "Потолок<br>за 1 день",
+  "Потолок<br><span class=\"nowrap\">от 2х дней</span>",
   "Быстро. Ровно.<br>Доступно",
   "Отзывы",
   "Называем цену и сроки сразу",
   "Оставьте номер, свяжемся в ближайшее рабочее время. Если не свяжемся быстро, с нас скидка.",
   "reviews-carousel",
+  "review-controls",
+  "review-viewport",
   "review-track",
   "review-button"
 ];
@@ -75,6 +79,7 @@ for (const marker of mustInclude) {
 
 const mustNotInclude = [
   "КАЗАХСТАН",
+  "за 1 день",
   "Говорят просто",
   "Посчитаем ваш потолок",
   "Пока форма работает как заглушка",
@@ -101,7 +106,21 @@ for (const target of linkTargets) {
   }
 }
 
-if (/(action=["']https?:|fetch\(|XMLHttpRequest)/i.test(pages.index + read("assets/js/main.js"))) {
+const styleMarkers = ["scroll-snap-type: x mandatory", "-webkit-overflow-scrolling: touch", "border: 3px solid"];
+for (const marker of styleMarkers) {
+  if (!css.includes(marker)) {
+    fail(`Missing mobile-first review style marker: ${marker}`);
+  }
+}
+
+const scriptMarkers = ["scrollToReview", "getNearestIndex", "viewport.scrollBy"];
+for (const marker of scriptMarkers) {
+  if (!js.includes(marker)) {
+    fail(`Missing review carousel behavior marker: ${marker}`);
+  }
+}
+
+if (/(action=["']https?:|fetch\(|XMLHttpRequest)/i.test(pages.index + js)) {
   fail("The static request form must not send data to a backend.");
 }
 

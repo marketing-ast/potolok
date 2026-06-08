@@ -164,6 +164,10 @@ h1 {
   line-height: 0.9;
 }
 
+.nowrap {
+  white-space: nowrap;
+}
+
 h2 {
   margin-bottom: 18px;
   font-size: clamp(34px, 5vw, 74px);
@@ -447,43 +451,63 @@ section {
   position: relative;
 }
 
+.review-controls {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: -10px 0 24px;
+}
+
 .review-viewport {
-  overflow: hidden;
   width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.review-viewport::-webkit-scrollbar {
+  display: none;
 }
 
 .review-track {
   display: flex;
-  gap: 18px;
-  transition: transform 420ms ease;
-  will-change: transform;
+  width: max-content;
+  gap: 22px;
+  padding: 6px max(70px, calc((100vw - (min(42vw, 560px) * 2) - 22px) / 2)) 34px;
 }
 
 .review-card {
-  flex: 0 0 clamp(360px, 40vw, 640px);
-  min-height: 260px;
-  padding: 30px;
-  background: var(--surface);
-  border: 1px solid var(--line);
+  display: flex;
+  flex: 0 0 clamp(380px, 42vw, 560px);
+  min-height: 282px;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 32px;
+  background: #fffdf7;
+  border: 3px solid #cfc4ad;
   border-radius: var(--radius);
+  box-shadow: 0 18px 42px rgba(48, 43, 30, 0.1);
   scroll-snap-align: center;
+  scroll-margin-inline: 24px;
 }
 
 .review-card p {
-  color: var(--muted);
+  color: #4c5147;
   font-size: 20px;
 }
 
 .review-card strong {
   display: block;
+  margin-top: 28px;
+  padding-top: 16px;
   color: var(--ink);
+  border-top: 1px solid #ded5c4;
   font-size: 18px;
 }
 
 .review-button {
-  position: absolute;
-  top: 50%;
-  z-index: 3;
   display: grid;
   width: 46px;
   height: 46px;
@@ -495,22 +519,12 @@ section {
   font-size: 34px;
   line-height: 1;
   cursor: pointer;
-  transform: translateY(-50%);
   box-shadow: 0 12px 28px rgba(50, 43, 25, 0.16);
 }
 
 .review-button:hover {
   background: #f6ca55;
 }
-
-.review-prev {
-  left: clamp(18px, 4vw, 56px);
-}
-
-.review-next {
-  right: clamp(18px, 4vw, 56px);
-}
-
 
 .faq-list {
   display: grid;
@@ -755,12 +769,13 @@ textarea {
 
   .review-track {
     gap: 14px;
+    padding: 4px max(18px, calc((100vw - min(82vw, 320px)) / 2)) 30px;
   }
 
   .review-card {
-    flex: 0 0 calc(100vw - 108px);
-    min-height: 250px;
-    padding: 24px;
+    flex: 0 0 min(82vw, 320px);
+    min-height: 258px;
+    padding: 22px;
   }
 
   .review-card p {
@@ -771,6 +786,10 @@ textarea {
     width: 40px;
     height: 40px;
     font-size: 28px;
+  }
+
+  .review-controls {
+    margin: -4px 0 18px;
   }
 
   .hero-media {
