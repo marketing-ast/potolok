@@ -15,7 +15,7 @@ if (form && note) {
     const name = String(formData.get("name") || "").trim();
     const phone = String(formData.get("phone") || "").trim();
 
-    note.textContent = `${name ? `${name}, ` : ""}заявка принята в браузере. Быстрее всего сейчас позвонить: ${phone || "+7 776 381 13 16"}.`;
+    note.textContent = `${name ? `${name}, ` : ""}заявка принята в браузере. Быстрее всего сейчас позвонить: ${phone || "+77763811316"}.`;
     form.reset();
   });
 }
