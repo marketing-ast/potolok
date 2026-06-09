@@ -42,8 +42,7 @@ const combined = Object.values(pages).join("\n").toLowerCase();
 
 const requiredFragments = [
   "ип bakha potolok",
-  "алматинская обл",
-  "тулпар, 3",
+  "тулпар 3, алматы, алматинская 020000 казахстан",
   "+7 776 381 13 16",
   "bakhapotolok@gmail.com",
   "12 месяцев",
