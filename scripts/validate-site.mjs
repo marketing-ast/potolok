@@ -14,6 +14,8 @@ const files = [
   "contacts.html",
   "privacy.html",
   "personal-data.html",
+  "privacy/index.html",
+  "personal-data/index.html",
   "assets/css/styles.css",
   "assets/js/main.js",
   "docs/reference/behance-landing-reference.md"
@@ -27,9 +29,11 @@ for (const file of files) {
 
 const pages = {
   index: read("index.html"),
-  contacts: read("contacts.html"),
-  privacy: read("privacy.html"),
-  personalData: read("personal-data.html")
+  contactsRedirect: read("contacts.html"),
+  privacyRedirect: read("privacy.html"),
+  personalDataRedirect: read("personal-data.html"),
+  privacy: read("privacy/index.html"),
+  personalData: read("personal-data/index.html")
 };
 const css = read("assets/css/styles.css");
 const js = read("assets/js/main.js");
@@ -100,11 +104,26 @@ for (const marker of mustNotInclude) {
   }
 }
 
-const linkTargets = ["contacts.html", "privacy.html", "personal-data.html"];
+const linkTargets = ["#request", "privacy/", "personal-data/"];
 for (const target of linkTargets) {
   if (!pages.index.includes(`href="${target}"`)) {
     fail(`Index page must link to ${target}`);
   }
+}
+
+const outdatedIndexLinks = ["contacts.html", "privacy.html", "personal-data.html"];
+for (const target of outdatedIndexLinks) {
+  if (pages.index.includes(`href="${target}"`)) {
+    fail(`Index page must not link to old ${target} URL.`);
+  }
+}
+
+if (!pages.contactsRedirect.includes("url=index.html#request")) {
+  fail("Old contacts.html must redirect to the request/contact block.");
+}
+
+if (!pages.privacyRedirect.includes("url=privacy/") || !pages.personalDataRedirect.includes("url=personal-data/")) {
+  fail("Old legal .html pages must redirect to clean URL pages.");
 }
 
 const styleMarkers = ["scroll-snap-type: x mandatory", "-webkit-overflow-scrolling: touch", "border: 3px solid"];
